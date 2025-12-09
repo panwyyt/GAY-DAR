@@ -13,8 +13,8 @@
         --font-main: 'Prompt', sans-serif;
         --neon-pink: #ff00ff;
         --neon-purple: #8a2be2;
-        --bg-deep-dark: #000000; /* เปลี่ยนเป็นสีดำสนิท */
-        --card-dark: #12121e;    /* พื้นหลังการ์ดให้เป็นสีดาร์กม่วงเข้ม */
+        --bg-deep-dark: #000000;
+        --card-dark: #12121e;
         --color-pink: #ff69b4;
         --color-black: #000000;
         --color-blue: #4299e1;
@@ -24,11 +24,10 @@
 
     body {
         font-family: var(--font-main);
-        background-color: var(--bg-deep-dark); /* ใช้สีดำสนิท */
-        /* ลดความสว่างของแสง Neon Background ลงเพื่อไม่ให้รบกวน */
+        background-color: var(--bg-deep-dark);
         background-image: radial-gradient(circle at 50% 10%, rgba(138, 43, 226, 0.05), transparent 50%), 
                           radial-gradient(circle at 80% 90%, rgba(255, 0, 255, 0.05), transparent 60%);
-        color: #e2e8f0; /* สีตัวอักษรเริ่มต้นให้เป็นสีขาวเทา */
+        color: #e2e8f0;
         transition: background-color 0.3s, color 0.3s;
         min-height: 100vh;
         overflow-y: auto;
@@ -36,7 +35,7 @@
 
     .neon-card {
         background-color: var(--card-dark); 
-        box-shadow: 0 0 40px rgba(138, 43, 226, 0.7), 0 0 20px rgba(255, 0, 255, 0.5) inset; /* เพิ่มความเข้มเงา */
+        box-shadow: 0 0 40px rgba(138, 43, 226, 0.7), 0 0 20px rgba(255, 0, 255, 0.5) inset;
         position: relative;
         z-index: 10;
         margin-top: auto;
@@ -174,7 +173,7 @@
 
     /* 9:16 Card Aspect Ratio */
     #finalCardPage {
-        max-width: 380px; /* Limit width for desktop to keep aspect ratio nice */
+        max-width: 380px; 
         margin: 20px auto;
     }
 
@@ -220,15 +219,12 @@
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4 py-8 relative">
 
-    <!-- Audio Elements -->
     <audio id="rainSound" class="hidden" loop src="https://github.com/panwyyt/GAY-DAR/raw/refs/heads/main/Rain.mp3"></audio>
     <audio id="finalSound" class="hidden" loop src="https://github.com/panwyyt/GAY-DAR/raw/refs/heads/main/Noorat_Laugh.mp3"></audio>
 
-    <!-- Overlays -->
     <div id="rainOverlay" class="fixed inset-0 pointer-events-none hidden transition-colors duration-1000 z-0"></div>
     <div id="discoOverlay" class="hidden disco-overlay"></div>
 
-    <!-- 1. หน้าหลัก -->
     <div id="landingPage" class="w-full max-w-md p-6 sm:p-10 rounded-3xl neon-card relative z-10 mx-auto my-4">
         <header class="text-center mb-4">
             <h1 class="text-5xl sm:text-6xl font-extrabold bg-clip-text text-transparent neon-gradient text-glow">GAY-DAR</h1>
@@ -248,7 +244,6 @@
         </footer>
     </div>
 
-    <!-- 2. หน้าแบบทดสอบ (Q1-Q4) -->
     <div id="quizPage" class="hidden w-full max-w-md p-6 sm:p-10 rounded-3xl neon-card relative z-10 mx-auto my-4">
         <header class="text-center mb-6">
             <div class="w-full mb-6">
@@ -276,7 +271,6 @@
         </footer>
     </div>
     
-    <!-- 3. หน้าผลลัพธ์ (ปกติ) -->
     <div id="resultPage" class="hidden w-full max-w-md p-6 sm:p-10 rounded-3xl neon-card text-center relative z-10 mx-auto my-4">
         <header class="mb-4">
             <div class="w-full mb-6">
@@ -300,7 +294,6 @@
             <button id="continueToRainButton" class="hidden w-full mt-8 py-4 px-6 rounded-full text-lg font-bold transition duration-300 transform bg-gradient-to-r from-primary-pink to-primary-purple text-white shadow-lg shadow-primary-purple/50 hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-primary-pink focus:ring-opacity-50">ไปต่อ...</button>
             <button id="continueToNextQButton" class="hidden w-full mt-8 py-4 px-6 rounded-full text-lg font-bold transition duration-300 transform bg-gradient-to-r from-primary-pink to-primary-purple text-white shadow-lg shadow-primary-purple/50 hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-primary-pink focus:ring-opacity-50">ไปคำถามข้อถัดไป</button>
             
-            <!-- ปุ่มไปสู่หน้า Warning (ข้อ 4) -->
             <button id="goToWarningButton" class="hidden w-full mt-8 py-4 px-6 rounded-full text-lg font-bold transition duration-300 transform bg-gradient-to-r from-red-600 to-orange-500 text-white shadow-lg shadow-red-500/50 hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50 animate-pulse">ไปสู่บททดสอบสุดท้าย</button>
 
             <button id="restartButton" class="hidden w-full mt-3 py-4 px-6 rounded-full text-lg font-bold transition duration-300 transform bg-gray-600/30 text-white/70 hover:bg-gray-600/50 hover:text-white focus:outline-none focus:ring-4 focus:ring-primary-pink focus:ring-opacity-50">เริ่มแบบทดสอบใหม่</button>
@@ -310,7 +303,6 @@
         </footer>
     </div>
 
-    <!-- 4. หน้าเพลง -->
     <div id="musicInterludePage" class="hidden w-full max-w-md p-6 sm:p-10 rounded-3xl neon-card text-center relative z-10 mx-auto my-4">
         <header class="mb-6">
             <h1 class="text-3xl font-extrabold bg-clip-text text-transparent neon-gradient text-glow mb-2">กดเล่นเพลงด้านล่างก่อนไปต่อ</h1>
@@ -327,7 +319,6 @@
         </footer>
     </div>
 
-    <!-- 5. หน้า Rain Interlude -->
     <div id="rainInterludePage" class="hidden w-full max-w-md p-6 sm:p-10 rounded-3xl neon-card text-center relative z-10 mx-auto my-4">
         <header class="mb-6">
             <h1 id="rainTitle" class="text-3xl font-extrabold bg-clip-text text-transparent neon-gradient text-glow mb-2">คุณหนีพรานบุญมาได้แล้ว เก่งมากๆ</h1>
@@ -346,7 +337,6 @@
         </footer>
     </div>
 
-    <!-- 6. หน้า Warning Interlude -->
     <div id="warningInterludePage" class="hidden w-full max-w-md p-6 sm:p-10 rounded-3xl neon-card text-center relative z-10 mx-auto my-4 border-4 border-red-600/50">
         <header class="mb-6">
             <div class="w-full mb-6">
@@ -371,7 +361,6 @@
         </footer>
     </div>
 
-    <!-- 7. หน้า Math Intro Interlude -->
     <div id="mathIntroPage" class="hidden w-full max-w-md p-6 sm:p-10 rounded-3xl neon-card text-center relative z-10 mx-auto my-4">
         <header class="mb-6">
             <div class="text-6xl mb-4">🧮</div>
@@ -397,7 +386,6 @@
         </footer>
     </div>
 
-    <!-- 8. หน้าเกม Q5 (21 Game) -->
     <div id="gamePage" class="hidden w-full max-w-md p-6 sm:p-10 rounded-3xl neon-card relative z-10 mx-auto my-4">
         <header class="text-center mb-6">
             <h1 class="text-3xl font-extrabold bg-clip-text text-transparent neon-gradient text-glow">คำถามที่ 5/5</h1>
@@ -424,7 +412,6 @@
         </footer>
     </div>
 
-    <!-- 9. หน้าประมวลผล (Processing Page) -->
     <div id="processingPage" class="hidden w-full max-w-md p-8 sm:p-12 rounded-3xl neon-card relative z-10 mx-auto my-4 text-center">
         <header class="mb-8">
             <h1 class="text-3xl font-extrabold text-white text-glow mb-4">กำลังประมวลผล...</h1>
@@ -449,29 +436,33 @@
         </div>
     </div>
 
-    <!-- 10. หน้าผลลัพธ์แบบการ์ด (Final Card Page) -->
     <div id="finalCardPage" class="hidden w-full max-w-sm rounded-3xl relative z-10 mx-auto my-4 overflow-hidden shadow-2xl" style="aspect-ratio: 9/16;">
-        <!-- Background Image/Color -->
-        <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://raw.githubusercontent.com/panwyyt/GAY-DAR/refs/heads/main/PandoraBox_LGBTQ.png');">
-            <!-- Overlay Gradient for text readability if needed, usually image contains content -->
-            <!-- Adding a subtle gradient at bottom for text if image doesn't have it -->
+        
+        <img id="nooratGif" src="https://github.com/panwyyt/GAY-DAR/blob/main/Noorat.gif?raw=true" 
+             alt="Noorat Animation" 
+             class="absolute inset-0 w-full h-full object-cover hidden z-0opacity-50" 
+             style="mix-blend-mode: normal;">
+
+        <div id="staticCardBg" class="absolute inset-0 bg-cover bg-center z-10 transition-opacity duration-1000" style="background-image: url('https://raw.githubusercontent.com/panwyyt/GAY-DAR/refs/heads/main/PandoraBox_LGBTQ.png');">
             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
         </div>
         
-        <!-- Content Overlay -->
-        <div class="absolute inset-0 flex flex-col justify-end items-center p-8 pb-16 text-center">
+        <div class="absolute inset-0 flex flex-col justify-end items-center p-8 pb-16 text-center z-20">
             <h1 class="text-4xl font-extrabold text-white text-glow mb-4 drop-shadow-lg">คุณเป็นเกย์ 100%</h1>
-            <p class="text-lg text-white font-medium drop-shadow-md leading-relaxed">
+            <p class="text-lg text-white font-medium drop-shadow-md leading-relaxed mb-4">
                 ตอนนี้คุณไม่ได้เป็นคุณคนเดิมอีกต่อไป <br> เพราะคุณคือคุณคนเดิมแต่สีรุ้ง 🏳️‍🌈
             </p>
             
-            <button onclick="window.location.reload()" class="mt-6 px-6 py-2 bg-white/20 backdrop-blur-md border border-white/50 rounded-full text-white text-sm font-bold hover:bg-white/30 transition">
+            <button id="summonButton" onclick="summonNoorat()" class="mb-4 px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-600 shadow-[0_0_15px_rgba(255,215,0,0.6)] border border-yellow-300 rounded-full text-white font-bold text-base hover:scale-105 transition transform animate-pulse">
+                ✨ อัญเชิญนางฟ้านางสวรรค์ ✨
+            </button>
+            
+            <button onclick="window.location.reload()" class="px-6 py-2 bg-white/20 backdrop-blur-md border border-white/50 rounded-full text-white text-sm font-bold hover:bg-white/30 transition">
                 เล่นใหม่อีกครั้ง
             </button>
         </div>
     </div>
 
-    <!-- Game Rules Modal -->
     <div id="rulesModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 modal-fade">
         <div class="bg-gray-800 border border-primary-purple rounded-2xl p-6 max-w-sm w-full shadow-2xl relative">
             <h2 class="text-2xl font-bold text-white mb-4 text-center">📜 กติกา: เกมมรณะ 21</h2>
@@ -904,8 +895,8 @@
 
                 const currentQ = quizData[currentQuestionIndex];
                 if (!answers[currentQ.id]) {
-                     showTemporaryMessage('กรุณาเลือกคำตอบก่อน!', true);
-                     return;
+                      showTemporaryMessage('กรุณาเลือกคำตอบก่อน!', true);
+                      return;
                 }
                 
                 // Disable button to prevent double clicks
@@ -1005,6 +996,11 @@
             finalSound.pause();
             finalSound.currentTime = 0;
             document.getElementById('discoOverlay').classList.add('hidden');
+            
+            // Reset Final Page State
+            document.getElementById('nooratGif').classList.add('hidden');
+            document.getElementById('summonButton').classList.remove('hidden');
+            document.getElementById('staticCardBg').style.opacity = '1';
 
             showScreen('landingPage');
         }
@@ -1038,12 +1034,29 @@
             showScreen('finalCardPage');
             
             const laugh = document.getElementById('finalSound');
-            laugh.loop = true; // Loop audio
+            laugh.loop = true; 
             laugh.volume = 1.0;
-            laugh.play().catch(e => console.log(e));
+            laugh.play().catch(e => console.log("Auto-play blocked, waiting for interaction", e));
             
             const overlay = document.getElementById('discoOverlay');
             overlay.classList.remove('hidden');
+        }
+        
+        function summonNoorat() {
+            // 1. Show GIF
+            const gif = document.getElementById('nooratGif');
+            gif.classList.remove('hidden');
+            
+            // 2. Reduce opacity of static BG so GIF is visible (since gif is z-0, bg is z-10)
+            const bg = document.getElementById('staticCardBg');
+            bg.style.opacity = '0.5'; 
+            
+            // 3. Play Sound (User Interaction -> Bypasses Autoplay block)
+            const audio = document.getElementById('finalSound');
+            audio.play().catch(e => console.error(e));
+            
+            // 4. Hide Button
+            document.getElementById('summonButton').classList.add('hidden');
         }
 
         // --- 21 Game Logic ---
