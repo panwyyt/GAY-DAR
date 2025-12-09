@@ -1,1 +1,1232 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAY-DAR | Open Pandora's Box</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700;800&display=swap');
+        <link rel="icon" href="https://raw.githubusercontent.com/panwyyt/Joo4Tune/refs/heads/main/hatchedboy_logo.jpeg" type="image/x-icon">
+        :root {
+            --font-main: 'Prompt', sans-serif;
+            --neon-pink: #ff00ff;
+            --neon-purple: #8a2be2;
+            --bg-deep-dark: #0f0f1c;
+            --card-dark: #1e1b34;
+            --color-pink: #ff69b4;
+            --color-black: #000000;
+            --color-blue: #4299e1;
+            --color-white: #ffffff;
+            --color-rainbow: #32cd32;
+        }
 
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-deep-dark); 
+            background-image: radial-gradient(circle at 50% 10%, rgba(138, 43, 226, 0.15), transparent 50%), 
+                              radial-gradient(circle at 80% 90%, rgba(255, 0, 255, 0.15), transparent 60%);
+            color: #e2e8f0; 
+            transition: background-color 0.3s, color 0.3s;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+
+        .neon-card {
+            background-color: var(--card-dark); 
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.7), 0 0 15px rgba(255, 0, 255, 0.5) inset;
+            position: relative;
+            z-index: 10;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+        
+        .text-glow { text-shadow: 0 0 8px rgba(255, 255, 255, 0.8), 0 0 20px var(--neon-pink); }
+        .neon-gradient { background-image: linear-gradient(to right, var(--neon-pink), var(--neon-purple)); }
+        .warning-gradient { background-image: linear-gradient(to right, #ff416c, #ff4b2b); }
+        .text-warning-glow { text-shadow: 0 0 10px rgba(255, 0, 0, 0.8), 0 0 20px rgba(255, 100, 0, 0.6); }
+
+        #quizCanvas {
+            touch-action: none;
+            cursor: pointer;
+            border-radius: 12px;
+            background-color: rgba(0, 0, 0, 0.2);
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .gayDarBarClass {
+            background-image: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+            transition: width 0.8s ease-in-out;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            border-radius: 9999px;
+            height: 100%;
+        }
+
+        .persist-hidden {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+            opacity: 0;
+            pointer-events: none;
+            height: 0;
+            width: 0;
+            overflow: hidden;
+        }
+
+        .rain-drop {
+            position: absolute;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.6));
+            width: 2px;
+            height: 20px;
+            top: -20px;
+            animation: fall linear infinite;
+        }
+
+        .btn-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Q5 Game Styles */
+        #game-board-container {
+            position: relative; 
+            width: 100%;
+            margin-bottom: 15px;
+            background-color: rgba(255, 255, 255, 0.05); /* Transparent dark */
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 0, 255, 0.3);
+        }
+        #board-cells {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        .cell {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            aspect-ratio: 1 / 1; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.9em;
+            font-weight: bold;
+            border-radius: 4px;
+            color: #fff;
+            transition: all 0.3s;
+        }
+        .cell-21 {
+            background-color: rgba(255, 0, 0, 0.2);
+            border-color: #ff0000;
+            color: #ff4444;
+            font-size: 0.8em;
+            line-height: 1.2;
+        }
+        .cell.active {
+            background-color: rgba(255, 0, 255, 0.3);
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 10px var(--neon-pink);
+        }
+        #game-token {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            z-index: 20;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+            transition: left 0.3s ease-out, top 0.3s ease-out; 
+            opacity: 0; 
+            transform: translate(-50%, -50%);
+        }
+        
+        /* Checklist Animation */
+        .check-item {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out, color 0.3s ease;
+        }
+        .check-item.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .check-item.active {
+            color: #4ade80; /* text-green-400 */
+        }
+        .check-icon {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .check-item.active .check-icon {
+            opacity: 1;
+        }
+
+        /* 9:16 Card Aspect Ratio */
+        #finalCardPage {
+            max-width: 380px; /* Limit width for desktop to keep aspect ratio nice */
+            margin: 20px auto;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal-fade { animation: fadeIn 0.3s ease-out; }
+        @keyframes fall { to { margin-top: 100vh; } }
+        
+        /* Disco Lights Animation */
+        @keyframes disco {
+            0% { background-color: rgba(255, 0, 0, 0.2); }
+            15% { background-color: rgba(255, 255, 0, 0.2); }
+            30% { background-color: rgba(0, 255, 0, 0.2); }
+            45% { background-color: rgba(0, 255, 255, 0.2); }
+            60% { background-color: rgba(0, 0, 255, 0.2); }
+            75% { background-color: rgba(255, 0, 255, 0.2); }
+            90% { background-color: rgba(255, 255, 255, 0.2); }
+            100% { background-color: rgba(255, 0, 0, 0.2); }
+        }
+        
+        .disco-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 5;
+            mix-blend-mode: overlay;
+            animation: disco 0.5s infinite alternate;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-pink': 'var(--neon-pink)',
+                        'primary-purple': 'var(--neon-purple)',
+                        'accent-blue': 'var(--color-blue)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4 py-8 relative">
+
+    <!-- Audio Elements -->
+    <audio id="rainSound" class="hidden" loop src="https://github.com/panwyyt/GAY-DAR/raw/refs/heads/main/Rain.mp3"></audio>
+    <audio id="finalSound" class="hidden" loop src="https://github.com/panwyyt/GAY-DAR/raw/refs/heads/main/Noorat_Laugh.mp3"></audio>
+
+    <!-- Overlays -->
+    <div id="rainOverlay" class="fixed inset-0 pointer-events-none hidden transition-colors duration-1000 z-0"></div>
+    <div id="discoOverlay" class="hidden disco-overlay"></div>
+
+    <!-- 1. หน้าหลัก -->
+    <div id="landingPage" class="w-full max-w-md p-6 sm:p-10 rounded-3xl neon-card relative z-10 mx-auto my-4">
+        <header class="text-center mb-4">
+            <h1 class="text-5xl sm:text-6xl font-extrabold bg-clip-text text-transparent neon-gradient text-glow">GAY-DAR</h1>
+            <p class="text-xl font-medium opacity-80 text-gray-300">Open Pandora's Box</p>
+            <div class="mt-2 mb-2">
+                <img src="https://raw.githubusercontent.com/panwyyt/GAY-DAR/refs/heads/main/PandoraBox.png" 
+                     alt="Pandora's Box" class="w-full max-w-xs h-auto mx-auto object-contain"
+                     onerror="this.onerror=null; this.src='https://placehold.co/250x250/1e1b34/ffffff?text=P.Box+Error'; this.style.filter='none';">
+            </div>
+        </header>
+        <main class="text-center">
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-200 mb-8 tracking-tight text-glow">ค้นพบความเป็นตัวคุณที่ถูกปิดบังซ่อนไว้</h2>
+            <button id="startButton" class="w-full py-4 px-6 rounded-full text-lg font-bold transition duration-300 transform bg-gradient-to-r from-primary-pink to-primary-purple text-white shadow-lg shadow-primary-purple/50 hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-primary-pink focus:ring-opacity-50">เริ่มการค้นพบตัวตน</button>
+        </main>
+        <footer class="mt-10 pt-4 border-t border-gray-700 flex justify-center items-center text-xs text-gray-400 opacity-70">
+            <p>Made with ❤️ by <a href="https://x.com/hatchedboy" target="_blank" class="font-semibold hover:text-primary-pink transition duration-200">Hatchedboy</a></p>
+        </footer>
+    </div>
+
+    <!-- 2. หน้าแบบทดสอบ (Q1-Q4) -->
+    <div id="quizPage" class="hidden w-full max-w-md p-6 sm:p-10 rounded-3xl neon-card relative z-10 mx-auto my-4">
+        <header class="text-center mb-6">
+            <div class="w-full mb-6">
+                <p class="text-sm text-gray-300 mb-2 font-medium opacity-80 text-left">แนวโน้มความเป็นเกย์ของคุณ: <span id="gayDarPercentQuiz" class="font-bold text-primary-pink text-glow">0%</span></p>
+                <div class="w-full bg-gray-700 rounded-full h-3 border border-gray-500/50">
+                    <div id="gayDarBarQuiz" class="gayDarBarClass" style="width: 0%;"></div>
+                </div>
+            </div>
+            <h1 class="text-3xl font-extrabold bg-clip-text text-transparent neon-gradient text-glow">คำถามที่ <span id="questionNumber">1</span>/5</h1>
+        </header>
+        <main class="text-center flex flex-col w-full relative">
+            <h2 id="questionText" class="text-2xl font-semibold text-gray-200 mb-6"></h2>
+            
+            <div id="quizCanvasContainer" class="flex justify-center mb-6 hidden w-full relative z-20">
+                <canvas id="quizCanvas" width="300" height="200" class="shadow-2xl shadow-primary-purple/50 border-4 border-gray-900 mx-auto"></canvas>
+            </div>
+            
+            <p id="feedbackMessage" class="text-lg font-medium text-gray-400 mb-6 transition duration-300"></p>
+            <div id="choiceContainerPlaceholder" class="w-full"></div>
+            
+            <button id="nextButton" class="hidden w-full mt-4 py-3 px-6 rounded-full text-lg font-bold transition duration-300 transform bg-gradient-to-r from-primary-pink to-primary-purple text-white shadow-lg shadow-primary-purple/50 hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-primary-pink focus:ring-opacity-50 order-last relative z-50">ดูผลลัพธ์ข้อนี้</button>
+        </main>
+        <footer class="mt-10 pt-4 border-t border-gray-700 flex justify-center items-center text-xs text-gray-400 opacity-70">
+            <p>Made with ❤️ by <a href="https://x.com/hatchedboy" target="_blank" class="font-semibold hover:text-primary-pink transition duration-200">Hatchedboy</a></p>
+        </footer>
+    </div>
+    
+    <!-- 3. หน้าผลลัพธ์ (ปกติ) -->
+    <div id="resultPage" class="hidden w-full max-w-md p-6 sm:p-10 rounded-3xl neon-card text-center relative z-10 mx-auto my-4">
+        <header class="mb-4">
+            <div class="w-full mb-6">
+                <p class="text-sm text-gray-300 mb-2 font-medium opacity-80 text-left">แนวโน้มความเป็นเกย์ของคุณ: <span id="gayDarPercentResult" class="font-bold text-primary-pink text-glow">0%</span></p>
+                <div class="w-full bg-gray-700 rounded-full h-3 border border-gray-500/50">
+                    <div id="gayDarBarResult" class="gayDarBarClass" style="width: 0%;"></div>
+                </div>
+            </div>
+            <h1 id="resultHeader" class="text-4xl sm:text-5xl font-extrabold bg-clip-text text-transparent neon-gradient text-glow">ผลการวิเคราะห์</h1>
+            <div id="finalScoreContainer" class="hidden mt-4 text-center">
+                <p class="text-lg text-gray-300 font-medium opacity-80">คะแนนเกย์รวม:</p>
+                <p id="finalGayDarScore" class="text-6xl font-extrabold neon-gradient bg-clip-text text-transparent text-glow">100%</p>
+            </div>
+        </header>
+        <main class="space-y-6">
+            <div id="resultEmoji" class="text-6xl mb-4 transform hover:scale-110 transition duration-300"></div>
+            <h2 id="resultTitle" class="text-3xl font-bold text-primary-pink text-glow"></h2>
+            <p id="resultAnalysis" class="text-gray-200 text-base leading-relaxed opacity-90 text-left"></p>
+            
+            <button id="continueToMusicButton" class="hidden w-full mt-8 py-4 px-6 rounded-full text-lg font-bold transition duration-300 transform bg-gradient-to-r from-primary-pink to-primary-purple text-white shadow-lg shadow-primary-purple/50 hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-primary-pink focus:ring-opacity-50">ไปต่อ...</button>
+            <button id="continueToRainButton" class="hidden w-full mt-8 py-4 px-6 rounded-full text-lg font-bold transition duration-300 transform bg-gradient-to-r from-primary-pink to-primary-purple text-white shadow-lg shadow-primary-purple/50 hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-primary-pink focus:ring-opacity-50">ไปต่อ...</button>
+            <button id="continueToNextQButton" class="hidden w-full mt-8 py-4 px-6 rounded-full text-lg font-bold transition duration-300 transform bg-gradient-to-r from-primary-pink to-primary-purple text-white shadow-lg shadow-primary-purple/50 hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-primary-pink focus:ring-opacity-50">ไปคำถามข้อถัดไป</button>
+            
+            <!-- ปุ่มไปสู่หน้า Warning (ข้อ 4) -->
+            <button id="goToWarningButton" class="hidden w-full mt-8 py-4 px-6 rounded-full text-lg font-bold transition duration-300 transform bg-gradient-to-r from-red-600 to-orange-500 text-white shadow-lg shadow-red-500/50 hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50 animate-pulse">ไปสู่บททดสอบสุดท้าย</button>
+
+            <button id="restartButton" class="hidden w-full mt-3 py-4 px-6 rounded-full text-lg font-bold transition duration-300 transform bg-gray-600/30 text-white/70 hover:bg-gray-600/50 hover:text-white focus:outline-none focus:ring-4 focus:ring-primary-pink focus:ring-opacity-50">เริ่มแบบทดสอบใหม่</button>
+        </main>
+        <footer class="mt-10 pt-4 border-t border-gray-700 flex justify-center items-center text-xs text-gray-400 opacity-70">
+            <p>Made with ❤️ by <a href="https://x.com/hatchedboy" target="_blank" class="font-semibold hover:text-primary-pink transition duration-200">Hatchedboy</a></p>
+        </footer>
+    </div>
+
+    <!-- 4. หน้าเพลง -->
+    <div id="musicInterludePage" class="hidden w-full max-w-md p-6 sm:p-10 rounded-3xl neon-card text-center relative z-10 mx-auto my-4">
+        <header class="mb-6">
+            <h1 class="text-3xl font-extrabold bg-clip-text text-transparent neon-gradient text-glow mb-2">กดเล่นเพลงด้านล่างก่อนไปต่อ</h1>
+            <p class="text-sm text-gray-300 opacity-80">คำถามข้อต่อไปเกี่ยวข้องอะไรกับเพลงนี้นะ</p>
+        </header>
+        <main class="flex flex-col items-center space-y-6">
+            <div id="spotifyContainer" class="w-full flex justify-center">
+                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/27sxVaXSXpRMQDW1LHDLGn?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" class="shadow-2xl shadow-primary-purple/30"></iframe>
+            </div>
+            <button id="goToQ2Button" class="w-full py-4 px-6 rounded-full text-lg font-bold transition duration-300 transform bg-gradient-to-r from-primary-pink to-primary-purple text-white shadow-lg shadow-primary-purple/50 hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-primary-pink focus:ring-opacity-50">เพลงมาแล้วไปต่อกันเลย</button>
+        </main>
+        <footer class="mt-10 pt-4 border-t border-gray-700 flex justify-center items-center text-xs text-gray-400 opacity-70">
+            <p>Made with ❤️ by <a href="https://x.com/hatchedboy" target="_blank" class="font-semibold hover:text-primary-pink transition duration-200">Hatchedboy</a></p>
+        </footer>
+    </div>
+
+    <!-- 5. หน้า Rain Interlude -->
+    <div id="rainInterludePage" class="hidden w-full max-w-md p-6 sm:p-10 rounded-3xl neon-card text-center relative z-10 mx-auto my-4">
+        <header class="mb-6">
+            <h1 id="rainTitle" class="text-3xl font-extrabold bg-clip-text text-transparent neon-gradient text-glow mb-2">คุณหนีพรานบุญมาได้แล้ว เก่งมากๆ</h1>
+            <p id="rainSubtitle" class="text-lg text-gray-300 opacity-90">แต่ตอนนี้คุณหลงอยู่ในป่า ลองกดปุ่มด้านล่างนี้สิว่าเกิดอะไรขึ้น</p>
+        </header>
+        <main class="flex flex-col items-center space-y-8">
+            <button id="mysteryButton" class="w-24 h-24 rounded-full bg-gradient-to-br from-yellow-400 to-red-500 shadow-2xl shadow-yellow-500/50 flex items-center justify-center text-4xl transform hover:scale-110 transition duration-300 animate-pulse">❓</button>
+            <div id="rainLoading" class="hidden flex flex-col items-center">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-pink mb-4"></div>
+                <p class="text-primary-purple font-semibold animate-pulse">กำลังเรียกฝน...</p>
+            </div>
+            <button id="goToQ3Button" class="hidden w-full py-4 px-6 rounded-full text-lg font-bold transition duration-300 transform bg-gradient-to-r from-blue-500 to-primary-purple text-white shadow-lg shadow-blue-500/50 hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50">ไปคำถามข้อที่ 3</button>
+        </main>
+        <footer class="mt-10 pt-4 border-t border-gray-700 flex justify-center items-center text-xs text-gray-400 opacity-70">
+            <p>Made with ❤️ by <a href="https://x.com/hatchedboy" target="_blank" class="font-semibold hover:text-primary-pink transition duration-200">Hatchedboy</a></p>
+        </footer>
+    </div>
+
+    <!-- 6. หน้า Warning Interlude -->
+    <div id="warningInterludePage" class="hidden w-full max-w-md p-6 sm:p-10 rounded-3xl neon-card text-center relative z-10 mx-auto my-4 border-4 border-red-600/50">
+        <header class="mb-6">
+            <div class="w-full mb-6">
+                <p class="text-sm text-gray-300 mb-2 font-medium opacity-80 text-left">สถานะปัจจุบัน: <span class="font-bold text-red-500 text-glow animate-pulse">80%</span></p>
+                <div class="w-full bg-gray-800 rounded-full h-4 border border-red-500/50">
+                    <div style="width: 80%;" class="h-full rounded-full bg-gradient-to-r from-orange-500 to-red-600 shadow-[0_0_15px_rgba(255,0,0,0.7)] animate-pulse"></div>
+                </div>
+            </div>
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-red-500 text-warning-glow mb-2 animate-bounce">WARNING!</h1>
+            <p class="text-xl font-bold text-white opacity-90">ตอนนี้คุณมีแนวโน้มเป็นเกย์ 80% แล้ว</p>
+        </header>
+        <main class="flex flex-col items-center space-y-6">
+            <p class="text-gray-300 leading-relaxed">
+                แต่ไม่ต้องกังวล เพราะข้อสุดท้ายคือข้อตัดสิน ถ้าคุณผ่านข้อนี้ไปได้ คะแนนที่ผ่านมาจะไม่มีความหมาย <span class="text-green-400 font-bold">คุณจะกลายเป็นชายแท้/หญิงแท้ทันที!</span>
+            </p>
+            <button id="goToMathIntroButton" class="w-full py-4 px-6 rounded-full text-lg font-bold transition duration-300 transform bg-gradient-to-r from-red-600 to-orange-500 text-white shadow-lg shadow-red-500/50 hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50">
+                รับคำท้า!
+            </button>
+        </main>
+        <footer class="mt-10 pt-4 border-t border-gray-700 flex justify-center items-center text-xs text-gray-400 opacity-70">
+            <p>Made with ❤️ by <a href="https://x.com/hatchedboy" target="_blank" class="font-semibold hover:text-primary-pink transition duration-200">Hatchedboy</a></p>
+        </footer>
+    </div>
+
+    <!-- 7. หน้า Math Intro Interlude -->
+    <div id="mathIntroPage" class="hidden w-full max-w-md p-6 sm:p-10 rounded-3xl neon-card text-center relative z-10 mx-auto my-4">
+        <header class="mb-6">
+            <div class="text-6xl mb-4">🧮</div>
+            <h1 class="text-3xl font-extrabold bg-clip-text text-transparent neon-gradient text-glow mb-2">รู้หรือไม่?</h1>
+        </header>
+        <main class="flex flex-col items-center space-y-6">
+            <p class="text-lg text-gray-200 font-medium">
+                จากผลการวิจัย(ทิพย์)ในสัตว์พบว่า...
+            </p>
+            <blockquote class="text-2xl font-bold text-primary-pink italic text-glow">
+                “Gays are bad at math”<br>
+                <span class="text-base not-italic text-gray-300">(พวกเกย์ไม่เก่งเลข)</span>
+            </blockquote>
+            <p class="text-gray-300">
+                ถ้าเกิดคุณเล่นเกมในข้อที่ 5 ชนะ <span class="text-primary-purple font-bold">AI เก้ง</span> ได้ คุณจะได้รับการพิสูจน์ว่าเป็นผู้บริสุทธิ์ทันที!
+            </p>
+            <button id="goToQ5Button" class="w-full py-4 px-6 rounded-full text-lg font-bold transition duration-300 transform bg-gradient-to-r from-green-500 to-teal-400 text-white shadow-lg shadow-green-500/50 hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-green-400 focus:ring-opacity-50">
+                ฉันไม่ใช่เกย์ ฉันต้องผ่าน!
+            </button>
+        </main>
+        <footer class="mt-10 pt-4 border-t border-gray-700 flex justify-center items-center text-xs text-gray-400 opacity-70">
+            <p>Made with ❤️ by <a href="https://x.com/hatchedboy" target="_blank" class="font-semibold hover:text-primary-pink transition duration-200">Hatchedboy</a></p>
+        </footer>
+    </div>
+
+    <!-- 8. หน้าเกม Q5 (21 Game) -->
+    <div id="gamePage" class="hidden w-full max-w-md p-6 sm:p-10 rounded-3xl neon-card relative z-10 mx-auto my-4">
+        <header class="text-center mb-6">
+            <h1 class="text-3xl font-extrabold bg-clip-text text-transparent neon-gradient text-glow">คำถามที่ 5/5</h1>
+            <p class="text-sm text-gray-300 mt-2">เกมชี้ชะตา: ใครนับลง 21 ก่อนแพ้!</p>
+        </header>
+
+        <div id="game-board-container">
+            <div id="board-cells"></div>
+            <div id="game-token"></div>
+        </div>
+
+        <div id="current-number-display" class="text-4xl font-bold text-white text-center my-4 text-glow">0</div>
+        
+        <div id="gameMessage" class="text-lg font-medium text-gray-300 text-center mb-6 h-8">ตาคุณเริ่ม: เลือกตัวเลข +1, +2, หรือ +3</div>
+        
+        <div class="flex justify-center space-x-2 flex-wrap">
+            <button onclick="playerMove(1)" class="game-btn w-16 h-16 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-xl shadow-lg transition transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed">+1</button>
+            <button onclick="playerMove(2)" class="game-btn w-16 h-16 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-xl shadow-lg transition transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed">+2</button>
+            <button onclick="playerMove(3)" class="game-btn w-16 h-16 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-xl shadow-lg transition transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed">+3</button>
+        </div>
+
+        <footer class="mt-10 pt-4 border-t border-gray-700 flex justify-center items-center text-xs text-gray-400 opacity-70">
+            <p>Made with ❤️ by <a href="https://x.com/hatchedboy" target="_blank" class="font-semibold hover:text-primary-pink transition duration-200">Hatchedboy</a></p>
+        </footer>
+    </div>
+
+    <!-- 9. หน้าประมวลผล (Processing Page) -->
+    <div id="processingPage" class="hidden w-full max-w-md p-8 sm:p-12 rounded-3xl neon-card relative z-10 mx-auto my-4 text-center">
+        <header class="mb-8">
+            <h1 class="text-3xl font-extrabold text-white text-glow mb-4">กำลังประมวลผล...</h1>
+            <div class="w-16 h-16 border-4 border-t-primary-pink border-r-primary-purple border-b-primary-blue border-l-transparent rounded-full animate-spin mx-auto"></div>
+        </header>
+        <main id="checklistContainer" class="space-y-4 text-left text-lg text-gray-300 pl-8">
+            <div class="check-item flex items-center" id="check1">
+                <span class="check-icon">✓</span> สีของความเป็นเกย์
+            </div>
+            <div class="check-item flex items-center" id="check2">
+                <span class="check-icon">✓</span> สัตว์แห่งชาวเกย์
+            </div>
+            <div class="check-item flex items-center" id="check3">
+                <span class="check-icon">✓</span> การตอบสนองแบบเกย์
+            </div>
+            <div class="check-item flex items-center" id="check4">
+                <span class="check-icon">✓</span> การเหมารวมที่เกย์ได้รับ
+            </div>
+        </main>
+        <div id="finalLoadingText" class="mt-8 text-primary-pink font-bold text-xl opacity-0 transition-opacity duration-1000">
+            คุณเป็นเกย์ 100%
+        </div>
+    </div>
+
+    <!-- 10. หน้าผลลัพธ์แบบการ์ด (Final Card Page) -->
+    <div id="finalCardPage" class="hidden w-full max-w-sm rounded-3xl relative z-10 mx-auto my-4 overflow-hidden shadow-2xl" style="aspect-ratio: 9/16;">
+        <!-- Background Image/Color -->
+        <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://raw.githubusercontent.com/panwyyt/GAY-DAR/refs/heads/main/PandoraBox_LGBTQ.png');">
+            <!-- Overlay Gradient for text readability if needed, usually image contains content -->
+            <!-- Adding a subtle gradient at bottom for text if image doesn't have it -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+        </div>
+        
+        <!-- Content Overlay -->
+        <div class="absolute inset-0 flex flex-col justify-end items-center p-8 pb-16 text-center">
+            <h1 class="text-4xl font-extrabold text-white text-glow mb-4 drop-shadow-lg">คุณเป็นเกย์ 100%</h1>
+            <p class="text-lg text-white font-medium drop-shadow-md leading-relaxed">
+                ตอนนี้คุณไม่ได้เป็นคุณคนเดิมอีกต่อไป <br> เพราะคุณคือคุณคนเดิมแต่สีรุ้ง 🏳️‍🌈
+            </p>
+            
+            <button onclick="window.location.reload()" class="mt-6 px-6 py-2 bg-white/20 backdrop-blur-md border border-white/50 rounded-full text-white text-sm font-bold hover:bg-white/30 transition">
+                เล่นใหม่อีกครั้ง
+            </button>
+        </div>
+    </div>
+
+    <!-- Game Rules Modal -->
+    <div id="rulesModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 modal-fade">
+        <div class="bg-gray-800 border border-primary-purple rounded-2xl p-6 max-w-sm w-full shadow-2xl relative">
+            <h2 class="text-2xl font-bold text-white mb-4 text-center">📜 กติกา: เกมมรณะ 21</h2>
+            <ul class="text-gray-300 space-y-3 text-sm mb-6 list-disc pl-5">
+                <li>ผลัดกันนับเลขเพิ่มทีละ 1, 2, หรือ 3</li>
+                <li>ใครนับตกเลข <strong>21</strong> คนนั้น <strong>แพ้</strong> (ระเบิดลง) 💣</li>
+                <li>ถ้าคุณชนะ = คุณไม่ใช่เกย์ (0%)</li>
+                <li>ถ้าคุณแพ้ = คุณคือเกย์ตัวแม่ (100%)</li>
+                <li>คุณได้เริ่มก่อน... ขอให้โชคดี!</li>
+            </ul>
+            <button onclick="closeRulesAndStart()" class="w-full py-3 rounded-xl bg-gradient-to-r from-green-500 to-teal-500 text-white font-bold shadow-lg hover:shadow-green-500/50 transition">
+                เข้าใจแล้ว เริ่มเลย!
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        'use strict';
+
+        // --- Data & Variables ---
+        const quizData = [
+            { id: 1, question: "1. สีข้อไหนบ่งบอกความเป็นตัวของคุณได้ดีที่สุด", type: "color_balls", options: [ { name: "ชมพู", color: "var(--color-pink)" }, { name: "ดำ", color: "var(--color-black)" }, { name: "ฟ้า", color: "var(--color-blue)" }, { name: "ขาว", color: "var(--color-white)" }, { name: "รุ้ง", color: "var(--color-rainbow)" } ], results: { "ชมพู": { emoji: "💖", title: "ชมพูสายหวาน", analysis: "สี 'ชมพู' นี่แหละ โคตรหวานและโคตรเกย์เลย การที่คุณชอบสีชมพู แปลว่าคุณพร้อมที่จะเป็น 'Mean Girl' หรือ 'Barbie' ในทุกสถานการณ์ เป็นสีที่บอกว่า 'ฉันไม่กลัวที่จะสวยเด่น!' การที่คุณกล้าหยิบจับอะไรที่เป็นสีชมพู นั่นหมายถึงคุณมีจิตวิญญาณของ Diva ซ่อนอยู่ในตัว ดังนั้นคุณจึงมีความเป็นเกย์สูงมาก เพราะการเป็นตัวแม่ต้องเด่นกว่าใครยังไงล่ะ" }, "ดำ": { emoji: "⚫", title: "ดำดีสีไม่ตก", analysis: "คนทั่วไปอาจเข้าใจผิด ว่าชอบสีดำหมายถึงดาร์ก ความแมนของชายแท้ แต่ไม่ใช่เลย สีดำคือความคลาสสิก แฟชั่น และดูแพง ไม่มีใครชอบของแพงและแฟชั่นไปมากกว่าเกย์อีกแล้ว เพราะสีดำ ใส่คู่กับสีอะไรก็รอด และที่สำคัญใส่แล้วดูผอมเพรียว คุณจึงเป็นเกย์ที่มีสไตล์ และอินเทรนด์ตลอดเวลา ในกลุ่มชาวเกย์นั้น แฟชั่นและความเป๊ะถือเป็นเรื่องสำคัญอันดับหนึ่ง สีดำคือยูนิฟอร์มของ 'Queen of the Night' ที่พร้อมจะเริ่ดในทุกปาร์ตี้ยังไงล่ะ" }, "ฟ้า": { emoji: "💙", title: "ฟ้ารักพ่อ", analysis: "สีฟ้ามักเป็นตัวแทนของเพศชายในเชิงโครโมโซม XY ซึ่งเป็นโครโมโซมที่พร้อมจะโตมาเพื่อเป็นเกย์ยังไงล่ะ เพราะสีฟ้าคือสีของท้องฟ้าเป็นตัวแทนของ 'ความสะอาดสะอ้านและความสุภาพ' คุณลองคิดถึงผู้ชายที่รักความสะอาดและสุภาพนุ่มนวลสิ จะเป็นอะไรไปได้ นอกจากเป็นเกย์ที่กำลังแอ๊บแมนอยู่! และคุณนี่แหละคือเกย์ตัวแม่ที่เตรียมพร้อมจะเฉิดฉายในอนาคต" }, "ขาว": { emoji: "⚪", title: "ขาวบริสุทธ์แรกแย้ม", analysis: "สีขาวคือสีแห่งความบริสุทธิ์... เหมือนผ้าขาวที่ไร้ประสบการณ์ แต่ก็พร้อมที่จะ แปดเปื้อน ใช่แล้วจ้า การที่ชอบสีขาวคุณคือเกย์ที่ยังมีความละอ่อน ความเกย์น้อย แต่ก็พร้อมแล้วที่จะออกไปเผชิญโลกกว้าง พร้อมแล้วที่จะแปดเปื้อนไปด้วยสีสันราคะ พร้อมเปิดรับทุกการสาดใส่จากพวกเกย์รุก คุณคือเกย์รับตัวแม่ในอนาคตเลยล่ะ สาเหตุที่คุณชอบสีขาว เพราะมันช่วยให้คุณ 'โดดเด่น' ในกลุ่มพวกเกย์รุกที่กำลังขาดแคลนยังไงล่ะ" }, "รุ้ง": { emoji: "🏳️‍🌈", title: "Official LGBTQ+", analysis: "ชัดเลยแหละว่าสีรุ้งคือสีของธง Pride ที่ไม่มีใครสามารถปฏิเสธได้ว่าไม่เกย์! ถ้าคุณชอบสีรุ้งมากขนาดที่เลือกเป็นสีโปรดในชีวิต แปลว่าคุณกำลังประกาศอย่างเปิดเผยว่า 'I am proud to be gay' เต็มไปด้วยสีสันที่ซ่อนไว้ไม่อยู่ การชอบสีรุ้งคือการแสดงออกว่าคุณรักการเฉลิมฉลอง และพร้อมที่จะ 'โบยบิน' อย่างอิสระ ถ้าคุณชอบสีรุ้ง ก็ไม่ต้องสงสัยแล้วล่ะ คุณคือเกย์แบบ Official เลยทีเดียว" } } },
+            { id: 2, question: "2. คุณกำลังโดนพรานบุญไล่ล่าตัวอยู่ คุณจะเลือกแปลงร่างเป็นสัตว์ตัวใดเพื่อหลบหนีจากพรานบุญ", type: "choice", options: [ { name: "🐅 เสือ (Tiger)", value: "เสือ" }, { name: "🐇 กระต่าย (Rabbit)", value: "กระต่าย" }, { name: "🦌 กวาง (Deer)", value: "กวาง" }, { name: "🐻 หมี (Bear)", value: "หมี" }, { name: "🐺 ไฮยีน่า (Hyena)", value: "ไฮยีน่า" } ], results: { "เสือ": { emoji: "🐅", title: "แม่เสือสาว", analysis: "คุณเลือกเสือ... ชัดเลยว่าคุณคือแม่เสือสาวนัยน์ตาสวย คุณคือเกย์อย่างแน่นอน โดยคุณจะแปลงร่างเป็นแม่เสือเพื่อยั่วยวนพรานบุญให้ไว้ชีวิต ละครโปรดของคุณคงไม่พ้น “อังกอร์” ไม่ก็ \"ป่านางเสือ\" แน่ๆ คุณคือคนมั่น คุณคือเกย์ตัวแม่ คุณอาจรอดตายแต่เพราะกลายเป็นเมียพรานบุญอ่ะดิ ยัยเสือร่าน!" }, "กระต่าย": { emoji: "🐇", title: "กระต่ายน้อยบันนี่", analysis: "คุณเลือกกระต่าย คุณใช้ความเป็นเหยื่อเข้าสู้ ความใสซื่อ ไร้เดียงสาที่คุณมี ชัดเจนเลยว่าคุณเป็นเกย์แน่นอน คุณคือเกย์บันนี่หูกระต่าย ยั่วยวนพรานบุญด้วยความใสซื่อ โลลิค่อน คุณมันร้ายเงียบเปรียบเหมือนเกย์ที่หน้าใสแต่น้ำใจนักล่า" }, "กวาง": { emoji: "🦌", title: "กวางก็ต้องคู่กับเก้ง", analysis: "คุณเลือกกวางเหรอ? โหชัดมาก คุณคือพวกเก้งกวางอย่างแน่นอน ไม่ต้องมีพรานบุญมาล่า คุณก็พร้อมอ้าขาให้เขาไปทั่ว เพราะคุณคือปลาหมึกแถวบนในวงการ พวกเกย์กึง เกย์ม้าน้ำเอ๋ยจงหลบไป เพราะเกย์ตัวท็อปอย่างคุณกำลังเดิน" }, "หมี": { emoji: "🐻", title: "ต้าวหมียิ้มหวาน", analysis: "คุณคือพวกเกย์หมีที่ฉีกยิ้มที่ก็พาเหล่ามัมหมีใจละลาย คุณไม่ได้อยู่ในป่า แต่คุณอยู่ใน Beef จนกลายเป็นตำนานคนอ้วนใน Beef ควรไป… ที่ไหน มีเพียงแค่คุณเท่านั้นที่รู้ เพราะคุณคือเกย์หมี 100%" }, "ไฮยีน่า": { emoji: "🐺", title: "ไฮยีน่า (Hyena)", analysis: "ไฮยีน่าคือสมญานามของสัตว์ที่ล่าเป็นฝูง คุณจึงเป็นพวกชอบทำงานกลุ่ม 🥶✈️💉❄️ ชอบทำกิจกรรมเป็นหมู่ๆ คุณคือเกย์ที่ชอบเข้าสังคม เกย์ไอโซที่นัดรวมกลุ่มในคอนโดหรู คัดหุ่น คัดหน้า คุณคือเกย์ที่มาพร้อมก๊วนเพื่อน ที่พร้อมจะรุม Take Care พรานบุญจนต้องหน้ามืดตามัว" } } },
+            { id: 3, question: "3. คุณเจอกระท่อมกลางป่า หลังจากเปิดประตูเข้าไปคุณเจอคนเพศเดียวกันกับคุณ เขาคือคนที่คุณแอบชื่นชม แต่บางครั้งก็แอบอิจฉา เขาคิดว่าคุณไม่ชอบเขา และดูเหมือนเขาจะเข้ามาหลบฝนก่อนคุณนะ คุณจะมีปฏิสัมพันธ์กับเขาอย่างไร", type: "choice", options: [ { name: "🥹 พูดดีด้วย “ขอหลบฝนด้วยนะ”", value: "พูดดี" }, { name: "😏 กระแนะกระแหน “คงหลงทางสินะ”", value: "แซะ" }, { name: "😒 ถลึงตาใส่ แล้วเดินหนีออกมา", value: "ถลึงตา" }, { name: "👿 ไล่อีกฝ่ายออกไป", value: "ไล่" } ], results: { "พูดดี": { emoji: "🥹", title: "แอบอ่อยนะเนี่ย", analysis: "ในบรรยายกาศหนาวๆ แสงไฟสลัวๆ ฝนตกพรำๆแบบนี้ การที่คุณไปพูดดีด้วยแบบนั้นแบบนั้นคือการอ่อยเขานะ ถึงจะฟังดูโทษเหยื่อ แต่จากปกติไม่ชอบขี้หน้ากัน แต่มาวันนี้กลับพูดดีด้วย เขามองว่าคุณให้ท่าชัวร์ แถมอีกฝ่ายยังเพศเดียวกับคุณ แหนะ คุณเป็นเกย์แน่นอน" }, "แซะ": { emoji: "😏", title: "ปากไม่ตรงกับใจ", analysis: "คุณกำลังรับบทคนปากแข็ง ใครๆ เขาก็ดูออก คุณทำเป็นไม่ชอบพูดแซะเขาพอเป็นพิธี แต่ในใจกระดี๊กระด๊าที่ได้อยู่กับเขาสองต่อสอง 'หลงทางเหรอ' ไม่หรอก “หลงเธอมากกว่ามั้ง” คุณมันเป็นพวกเกย์ปากร้ายแต่ใจดีสินะ" }, "ถลึงตา": { emoji: "😒", title: "Drama Queen", analysis: "ใครๆก็ดูออกเน้อ คุณคือเจ้าแม่ดราม่า หาเรื่องให้ตัวเองมีอันตราย แล้วให้อีกฝ่ายเป็นห่วงตามไปง้อคุณใช่ไหมล่ะ ฝนตกหนักขนาดนั้น น้ำป่าไหลหลากขนาดนี้ดันเดินหนีออกมาอีก จะสร้างซีนให้เขาตามไปคว้าแขนล่ะสิ ชอบเล่นบทนางเอกเอ็มวีแบบนี้ คุณเป็นเกย์แน่นอน" }, "ไล่": { emoji: "👿", title: "นางร้ายละครหลังข่าว", analysis: "โห... คุณโคตรใจร้ายเลย มาทีหลังเขาแถมย้งไล่เขาไปอีก ถ้าอีกฝ่ายออกไปเจออันตรายล่ะ น้ำป่าไหลหลากเอย สัตว์ร้ายในป่าเอย คนใจร้ายแบบคุณนี่แหละ คืออินเนอร์ของ 'นางร้าย' ในละครหลังข่าว จริตตัวแม่ขับไล่ศัตรูหัวใจ... ชัวร์เลยคุณเป็นเกย์แน่นอน" } } },
+            { id: 4, question: "4. หลังจากเรื่องราวที่เกิดขึ้น อีกฝ่ายดันเป็นฝ่ายเข้ามากอดคุณ และสารภาพว่าเขาแอบรักคุณมานานแล้ว คุณจะทำยังไงดีนะ", type: "choice", options: [ { name: "🔥 ตอบรับรักอีกฝ่าย", value: "รับรัก" }, { name: "😭 ผลักอีกฝ่านออกแล้วร้องไห้", value: "ร้องไห้" }, { name: "😒 ทำหน้าขยะแขยงรังเกียจ", value: "รังเกียจ" }, { name: "🎭 เฉลยกับอีกฝ่ายว่าเป็นรับเหมือนกัน", value: "เฉลย" } ], results: { "รับรัก": { emoji: "🔥", title: "เพราะเราสองใจตรงกัน", analysis: "คุณนี่มันเกย์ชัดเจน คุณตอบรับรักแบบไม่ลังเลต่อเพศสถานะของอีกฝ่าย คุณเป็นเกย์ที่มั่นคงในความรู้สึก และพร้อมจะโยนฟอร์มความไม่ชอบขี้หน้าทิ้งไปตั้งแต่เจอกันในกระท่อมแล้วคุณไม่ได้แค่เป็นเกย์ แต่คุณคือคนที่มีความรักที่บริสุทธิ์ ไม่ต้องมีซีนเล่นตัว ไม่ต้องเล่นเกมส์ความรู้สึก นี่แหละค่ะ เกย์ที่รู้ว่าตัวเองต้องการอะไรและไม่เสียเวลาชีวิตไปกับการทำอะไรโง่ๆ" }, "ร้องไห้": { emoji: "😭", title: "รักของเราคงเป็นไปไม่ได้", analysis: "ซีนนี้ของคุณต้องใช้ดนตรีเศร้าคลอ คุณรู้ตัวว่าคุณเป็นเกย์ 100% และลึกๆ คุณก็รู้ว่าเรื่องของเราเป็นไปไม่ได้ คุณเป็นเกย์หัวโบราณเกิดขึ้นมาตั้งแต่สมัยการสมรสเท่าเทียมยังไม่ถูกกฎหมาย คุณคือซากเน่าเฟะแห่งยุคสมัยที่ผ่านพ้นไปเลย คุณร้องไห้เพื่อ? เพื่อให้เขาตามง้อหนักกว่าเดิมเหรอ อีเกย์แก่เอ้ย คุณคือเกย์สุโขทัยใส่ผ้าไหมลอยกระทงชัวร์ๆ" }, "รังเกียจ": { emoji: "😒", title: "เกย์สายเก็บกด", analysis: "โอ๊ย! เจ็บจี๊ดไปถึงทรวง คุณคือเกย์แต่คุณดันเกลียดเกย์ สภาพ เขาเรียกว่า Internalized Homophobia ค่ะสาว คุณเป็นเกย์แน่นอนใครๆก็ดูออก แต่เพราะสังคมที่คุณเติบโตมาสอนคุณว่าการเป็นเกย์ไม่ดี คุณเลยต้องปฏิเสธตัวเองอย่างรุนแรง และการที่คุณพยายามผลักไสเขาด้วยคำว่า 'อี๋ ไอ้พวกเกย์' ทั้งๆ ที่คุณก็เป็น... มันคือการแสดงออกถึงความ 'ไม่ยอมรับ' แม่กระทั่งตัวเอง คุณคือคนที่น่าสงสารและน่าสมเพชที่สุด" }, "เฉลย": { emoji: "🎭", title: "เกย์หัวโบราณออร์โธดอกซ์", analysis: "คุณคือเกย์ที่มีภาวะ Effeminophobia (เกลียดกลัวความสาว) เพราะเติบโตมาตั้งแต่ยุคที่มีการแบ่งแยกเกย์คิง เกย์ควีนชัดเจน คุณคิดว่าโพซิชั่นบนเตียงมันเปลี่ยนแปลงไม่ได้ มันสำคัญกว่าความรักที่อยู่ตรงหน้าเหรอ คุณคะ! นี่มันสมัยไหนแล้ว การที่คุณรีบบอกว่าคุณก็เป็นรับเหมือนกัน แปลว่าคุณให้ความสำคัญกับเรื่องเซ็กส์มากกว่าหัวใจตัวเอง คุณคือเกย์ที่ตกยุคไปแล้วเด้อ คงต้องนอนติ้วตายคนเดียว" } } },
+            { id: 5, question: "5. (รอข้อมูล)", type: "choice", options: [{name:"A", value:"A"}], results: {"A": {emoji: "❓", title: "รอข้อมูล", analysis: "..."}} }
+        ];
+
+        // 21 Game Variables
+        const SAFE_NUMBERS_FOR_AI = [4, 8, 12, 16, 20]; 
+        const MAX_NUMBER = 21;
+        const MAX_COUNT = 3;
+        let currentNumber = 0;
+        let isPlayerTurn = true;
+        let isAnimating = false;
+        
+        // App State
+        let currentQuestionIndex = 0;
+        let gayDarScore = 0;
+        let answers = {};
+        let animationFrameId = null;
+        let balls = []; 
+        let isPlaying = false; 
+        let canvas, ctx;
+        let isRainActive = false;
+
+        const REFRESH_ICON_R = 15;
+        let REFRESH_ICON_X; 
+        const REFRESH_ICON_Y = REFRESH_ICON_R; 
+        const TOTAL_QUESTIONS = quizData.length;
+
+        // --- Audio Helper ---
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        function playMoveSound() {
+            if(audioContext.state === 'suspended') audioContext.resume();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1);
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.1);
+        }
+
+        function showTemporaryMessage(message, isError = false) {
+            let msgBox = document.getElementById('tempMessageBox');
+            if (!msgBox) {
+                msgBox = document.createElement('div');
+                msgBox.id = 'tempMessageBox';
+                msgBox.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 p-3 text-white rounded-lg shadow-xl z-50 transition-opacity duration-300 opacity-0 text-center pointer-events-none';
+                document.body.appendChild(msgBox);
+            }
+            msgBox.className = msgBox.className.replace(/bg-red-500|bg-accent-blue/g, '');
+            msgBox.classList.add(isError ? 'bg-red-500' : 'bg-accent-blue');
+            msgBox.textContent = message;
+            msgBox.classList.add('opacity-100');
+            setTimeout(() => { msgBox.classList.remove('opacity-100'); }, 3000);
+        }
+
+        function updateGayDarTracker() {
+            const answeredCount = Object.keys(answers).length;
+            gayDarScore = answeredCount * 20;
+            if(gayDarScore > 100) gayDarScore = 100;
+
+            const percentageText = `${gayDarScore}%`;
+            
+            const barQuiz = document.getElementById('gayDarBarQuiz');
+            const textQuiz = document.getElementById('gayDarPercentQuiz');
+            if(barQuiz) barQuiz.style.width = percentageText;
+            if(textQuiz) textQuiz.textContent = percentageText;
+
+            const barResult = document.getElementById('gayDarBarResult');
+            const textResult = document.getElementById('gayDarPercentResult');
+            if(barResult) barResult.style.width = percentageText;
+            if(textResult) textResult.textContent = percentageText;
+        }
+
+        function showScreen(screenId) {
+            const screens = ['landingPage', 'quizPage', 'resultPage', 'rainInterludePage', 'warningInterludePage', 'mathIntroPage', 'gamePage', 'processingPage', 'finalCardPage'];
+            screens.forEach(id => document.getElementById(id).classList.add('hidden'));
+            
+            // Special handling for music page persistence
+            const musicPage = document.getElementById('musicInterludePage');
+            if (screenId === 'musicInterludePage') {
+                musicPage.classList.remove('hidden');
+                musicPage.classList.remove('persist-hidden');
+            } else {
+                musicPage.classList.add('persist-hidden');
+                musicPage.classList.remove('hidden');
+            }
+
+            if (screenId !== 'musicInterludePage') {
+                document.getElementById(screenId).classList.remove('hidden');
+            }
+            updateGayDarTracker();
+        }
+
+        function createBalls() {
+            if(!canvas) return; 
+            balls = [];
+            const colors = quizData[currentQuestionIndex].options;
+            const baseRadius = 15; 
+            colors.forEach(item => {
+                let currentRadius = baseRadius;
+                if (item.name === "รุ้ง") currentRadius = baseRadius * 2;
+                else if (item.name === "ดำ") currentRadius = baseRadius / 2;
+                
+                let x = currentRadius + Math.random() * (canvas.width - 2 * currentRadius);
+                let y = currentRadius + Math.random() * (canvas.height - 2 * currentRadius);
+                let dx = (Math.random() - 0.5) * 2; 
+                let dy = (Math.random() - 0.5) * 2; 
+                if (Math.abs(dx) < 0.5) dx = dx > 0 ? 0.5 : -0.5;
+                if (Math.abs(dy) < 0.5) dy = dy > 0 ? 0.5 : -0.5;
+
+                balls.push({ x, y, radius: currentRadius, color: item.color, name: item.name, dx: dx * 2, dy: dy * 2, isCaught: false, caughtX: 0, caughtY: 0 });
+            });
+        }
+
+        function drawRefreshIcon(isCaught) {
+            if (!ctx || !isCaught) return;
+            ctx.beginPath();
+            ctx.arc(REFRESH_ICON_X, REFRESH_ICON_Y, REFRESH_ICON_R, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.fill();
+            ctx.fillStyle = 'var(--neon-pink)';
+            ctx.font = `${REFRESH_ICON_R * 1.5}px Prompt`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowColor = 'var(--neon-pink)';
+            ctx.shadowBlur = 5;
+            ctx.fillText('\u21BB', REFRESH_ICON_X, REFRESH_ICON_Y + 1);
+            ctx.shadowBlur = 0;
+        }
+
+        function drawBalls() {
+            if (!ctx) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const caughtBall = balls.find(b => b.isCaught);
+            balls.forEach(ball => {
+                ctx.beginPath();
+                const drawX = ball.isCaught ? ball.caughtX : ball.x;
+                const drawY = ball.isCaught ? ball.caughtY : ball.y;
+                ctx.arc(drawX, drawY, ball.radius, 0, Math.PI * 2);
+                let fillStyle;
+                if (ball.name === "รุ้ง") {
+                    const gradient = ctx.createRadialGradient(drawX, drawY, 0, drawX, drawY, ball.radius);
+                    gradient.addColorStop(0, '#FF0000'); gradient.addColorStop(0.25, '#FF7F00'); gradient.addColorStop(0.5, '#FFFF00'); gradient.addColorStop(0.75, '#00FF00'); gradient.addColorStop(1, '#0000FF'); 
+                    fillStyle = gradient;
+                } else {
+                    let cssVarName = ball.color.replace('var(', '').replace(')', '').trim();
+                    try {
+                        fillStyle = getComputedStyle(document.documentElement).getPropertyValue(cssVarName).trim();
+                        if(!fillStyle) fillStyle = ball.color; 
+                    } catch(e) { fillStyle = ball.color; }
+                }
+                ctx.fillStyle = fillStyle;
+                if (!ball.isCaught) {
+                    ctx.shadowColor = (ball.name === "ดำ") ? '#555555' : (ball.name === "ขาว" ? '#aaaaaa' : ctx.fillStyle);
+                    ctx.shadowBlur = 10;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                } else {
+                    ctx.shadowColor = (ball.name === "ดำ") ? '#555555' : (ball.name === "ขาว" ? '#ffffff' : ctx.fillStyle);
+                    ctx.shadowBlur = 15;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    if (ball.name === "ขาว" || ball.name === "รุ้ง") {
+                        try {
+                            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--bg-deep-dark').trim() || '#000';
+                        } catch(e) { ctx.fillStyle = '#000'; }
+                    }
+                    else ctx.fillStyle = '#fff';
+                    ctx.font = "12px Prompt";
+                    ctx.textAlign = "center";
+                    ctx.fillText(ball.name, drawX, drawY + 4);
+                }
+            });
+            if (caughtBall) drawRefreshIcon(true);
+        }
+
+        function updateBalls() {
+            balls.forEach(ball => {
+                if (ball.isCaught) return;
+                ball.x += ball.dx; ball.y += ball.dy;
+                if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) {
+                    ball.dx = -ball.dx;
+                    if (ball.x + ball.radius > canvas.width) ball.x = canvas.width - ball.radius;
+                    if (ball.x - ball.radius < 0) ball.x = ball.radius;
+                }
+                if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) {
+                    ball.dy = -ball.dy;
+                    if (ball.y + ball.radius > canvas.height) ball.y = canvas.height - ball.radius;
+                    if (ball.y - ball.radius < 0) ball.y = ball.radius;
+                }
+            });
+        }
+
+        function animateBalls() {
+            if (!isPlaying) {
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                return;
+            }
+            updateBalls(); drawBalls();
+            animationFrameId = requestAnimationFrame(animateBalls);
+        }
+
+        function handleBallClick(event) {
+            const rect = canvas.getBoundingClientRect();
+            const clickX = event.clientX - rect.left;
+            const clickY = event.clientY - rect.top;
+            const caughtBall = balls.find(b => b.isCaught);
+
+            if (caughtBall) {
+                const distanceToRefresh = Math.sqrt((clickX - REFRESH_ICON_X) ** 2 + (clickY - REFRESH_ICON_Y) ** 2);
+                if (distanceToRefresh <= REFRESH_ICON_R) {
+                    showTemporaryMessage("ปล่อยลูกบอลแล้ว! จับใหม่ได้เลย!", false);
+                    caughtBall.isCaught = false; 
+                    delete answers[quizData[currentQuestionIndex].id];
+                    document.getElementById('nextButton').classList.add('hidden');
+                    isPlaying = true;
+                    animateBalls();
+                    document.getElementById('feedbackMessage').innerHTML = '<span class="text-yellow-400">จับ!</span> ลูกบอลสีที่คุณเลือกขณะที่มันเด้งไปมา';
+                }
+                return;
+            } else {
+                for (let ball of balls) {
+                    const distance = Math.sqrt((clickX - ball.x) ** 2 + (clickY - ball.y) ** 2);
+                    if (distance <= ball.radius) {
+                        isPlaying = false;
+                        ball.isCaught = true;
+                        ball.caughtX = canvas.width / 2;
+                        ball.caughtY = canvas.height / 2;
+                        answers[quizData[currentQuestionIndex].id] = ball.name;
+                        document.getElementById('feedbackMessage').innerHTML = `คุณจับสี: <span class="text-primary-pink font-bold">${ball.name}</span> ได้! คลิกที่ปุ่มรีเฟรชเพื่อจับใหม่ หรือกดปุ่มบันทึก`;
+                        document.getElementById('nextButton').classList.remove('hidden');
+                        drawBalls();
+                        return;
+                    }
+                }
+                showTemporaryMessage("พลาด! กรุณาจิ้มให้โดนลูกบอล!", true);
+            }
+        }
+
+        function setupColorBalls() {
+            canvas = document.getElementById('quizCanvas');
+            ctx = canvas.getContext('2d');
+            if(!ctx) return;
+            REFRESH_ICON_X = canvas.width - REFRESH_ICON_R;
+            createBalls(); 
+            isPlaying = true;
+            document.getElementById('nextButton').classList.add('hidden');
+            document.getElementById('feedbackMessage').innerHTML = '<span class="text-yellow-400">จับ!</span> ลูกบอลสีที่คุณเลือกขณะที่มันเด้งไปมา';
+            canvas.removeEventListener('click', handleBallClick);
+            canvas.addEventListener('click', handleBallClick);
+            animateBalls();
+        }
+
+        function clearOldElements() {
+            try {
+                const oldContainer = document.getElementById('choiceContainer');
+                if (oldContainer) oldContainer.remove();
+            } catch (e) { }
+            document.getElementById('quizCanvasContainer').classList.add('hidden');
+            document.getElementById('feedbackMessage').classList.add('hidden');
+            isPlaying = false;
+            if (canvas) canvas.removeEventListener('click', handleBallClick);
+        }
+
+        function setupChoiceQuestion(questionData) {
+            const main = document.querySelector('#quizPage main');
+            const buttonContainer = document.createElement('div');
+            buttonContainer.id = 'choiceContainer';
+            buttonContainer.className = 'space-y-4 mb-6 w-full';
+            
+            questionData.options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn w-full py-3 px-6 rounded-lg text-lg font-bold text-gray-300 transition duration-200 bg-gray-600/30 hover:bg-gray-600/50 focus:outline-none';
+                btn.textContent = option.name;
+                btn.dataset.value = option.value;
+                btn.onclick = () => handleChoiceSelect(questionData.id, option.value, btn);
+                buttonContainer.appendChild(btn);
+            });
+            
+            document.getElementById('feedbackMessage').textContent = 'กรุณาเลือกคำตอบ';
+            document.getElementById('feedbackMessage').classList.remove('hidden');
+            // Insert choice container BEFORE next button
+            document.getElementById('choiceContainerPlaceholder').appendChild(buttonContainer);
+            
+            const nextBtn = document.getElementById('nextButton');
+            nextBtn.classList.remove('hidden');
+            nextBtn.textContent = 'ดูผลลัพธ์ข้อนี้';
+        }
+
+        function handleChoiceSelect(questionId, selectedValue, clickedButton) {
+            answers[questionId] = selectedValue;
+            document.querySelectorAll('.choice-btn').forEach(btn => {
+                btn.classList.remove('bg-primary-pink', 'text-white', 'bg-gray-600/50');
+                btn.classList.add('bg-gray-600/30', 'text-gray-300');
+            });
+            clickedButton.classList.remove('bg-gray-600/30', 'text-gray-300');
+            clickedButton.classList.add('bg-primary-pink', 'text-white');
+            
+            const feedback = document.getElementById('feedbackMessage');
+            feedback.textContent = 'คำตอบของคุณถูกบันทึกแล้ว!';
+            feedback.classList.remove('hidden', 'text-gray-400');
+            feedback.classList.add('text-green-400');
+        }
+
+        function showResult(selectedAnswer) {
+            const qData = quizData[currentQuestionIndex];
+            const result = qData.results[selectedAnswer];
+
+            if (!result) {
+                showTemporaryMessage("ไม่พบข้อมูลผลลัพธ์", true);
+                restartQuiz();
+                return;
+            }
+
+            document.getElementById('resultHeader').textContent = "ผลการวิเคราะห์";
+            document.getElementById('finalScoreContainer').classList.add('hidden');
+            document.getElementById('resultEmoji').textContent = result.emoji;
+            document.getElementById('resultTitle').textContent = result.title;
+            document.getElementById('resultAnalysis').textContent = result.analysis;
+
+            // Manage Buttons
+            document.getElementById('continueToMusicButton').classList.add('hidden');
+            document.getElementById('continueToNextQButton').classList.add('hidden');
+            document.getElementById('continueToRainButton').classList.add('hidden');
+            document.getElementById('restartButton').classList.add('hidden');
+            
+            // New Buttons
+            document.getElementById('goToWarningButton').classList.add('hidden');
+
+            // Reset Button State
+            const nextBtn = document.getElementById('nextButton');
+            nextBtn.classList.remove('btn-disabled');
+            nextBtn.textContent = "ดูผลลัพธ์ข้อนี้";
+
+            if (currentQuestionIndex === 0) { 
+                document.getElementById('continueToMusicButton').classList.remove('hidden');
+            } else if (currentQuestionIndex === 1) { 
+                document.getElementById('continueToRainButton').classList.remove('hidden');
+            } else if (currentQuestionIndex === 2) { // Q3 -> Q4
+                document.getElementById('continueToNextQButton').classList.remove('hidden');
+            } else if (currentQuestionIndex === 3) { // Q4 -> Warning
+                document.getElementById('goToWarningButton').classList.remove('hidden');
+            } else { 
+                document.getElementById('restartButton').classList.remove('hidden');
+            }
+
+            showScreen('resultPage');
+        }
+
+        function showMusicInterlude() { showScreen('musicInterludePage'); }
+        function showRainInterlude() { showScreen('rainInterludePage'); }
+        function showWarningInterlude() { showScreen('warningInterludePage'); }
+        function showMathIntroInterlude() { showScreen('mathIntroPage'); }
+
+        function loadQuestion(index) {
+            if (index === 5) {
+                 toggleRain(false);
+                 // Intercept Q5 load to show Game Page
+                 showScreen('gamePage');
+                 document.getElementById('rulesModal').classList.remove('hidden');
+                 resetGame(); // Ensure game resets
+                 return;
+            }
+
+            try {
+                clearOldElements(); 
+                currentQuestionIndex = index - 1;
+                const currentQ = quizData[currentQuestionIndex];
+                document.getElementById('questionNumber').textContent = index;
+                document.getElementById('questionText').textContent = currentQ.question;
+                const feedback = document.getElementById('feedbackMessage');
+                feedback.className = "text-lg font-medium text-gray-400 mb-6 transition duration-300";
+
+                // Reset Button
+                const nextBtn = document.getElementById('nextButton');
+                nextBtn.classList.remove('btn-disabled');
+                nextBtn.textContent = "ดูผลลัพธ์ข้อนี้";
+
+                if (currentQ.type === 'color_balls') {
+                    document.getElementById('quizCanvasContainer').classList.remove('hidden'); 
+                    feedback.classList.remove('hidden'); 
+                    setupColorBalls();
+                    nextBtn.classList.add('hidden'); // For ball game, hidden initially
+                } else if (currentQ.type === 'choice') {
+                    setupChoiceQuestion(currentQ);
+                }
+                updateGayDarTracker();
+            } catch (error) {
+                console.error("Error loading question:", error);
+            }
+        }
+
+        function startQuiz() {
+            gayDarScore = 0;
+            answers = {};
+            toggleRain(false);
+            updateGayDarTracker(); 
+            showScreen('quizPage');
+            loadQuestion(1);
+        }
+        
+        function handleNextQuestion() {
+            try {
+                const btn = document.getElementById('nextButton');
+                if (btn.classList.contains('btn-disabled')) return; // Prevent double clicks
+
+                const currentQ = quizData[currentQuestionIndex];
+                if (!answers[currentQ.id]) {
+                     showTemporaryMessage('กรุณาเลือกคำตอบก่อน!', true);
+                     return;
+                }
+                
+                // Disable button to prevent double clicks
+                btn.classList.add('btn-disabled');
+                btn.textContent = "กำลังประมวลผล...";
+
+                // Calculate Score Logic: count answered * 20
+                gayDarScore = Object.keys(answers).length * 20;
+                if(gayDarScore > 100) gayDarScore = 100;
+                updateGayDarTracker();
+                
+                if (currentQ.type === 'color_balls' && canvas) {
+                    isPlaying = false;
+                    canvas.removeEventListener('click', handleBallClick);
+                }
+                
+                showTemporaryMessage(`คะแนนเกย์ +20%! (${gayDarScore}%)`, false);
+                
+                // Small delay for UX
+                setTimeout(() => {
+                    showResult(answers[currentQ.id]);
+                }, 800);
+
+            } catch (error) { console.error(error); }
+        }
+        
+        function toggleRain(active) {
+            const rainOverlay = document.getElementById('rainOverlay');
+            const rainAudio = document.getElementById('rainSound');
+            if (active) {
+                rainOverlay.classList.remove('hidden');
+                rainOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.4)'; 
+                rainAudio.volume = 0.5;
+                rainAudio.play().catch(e => console.log("Audio:", e));
+                if (document.querySelectorAll('.rain-drop').length === 0) createRainDrops();
+                isRainActive = true;
+            } else {
+                rainOverlay.classList.add('hidden');
+                rainOverlay.style.backgroundColor = 'transparent';
+                rainAudio.pause();
+                rainAudio.currentTime = 0;
+                document.querySelectorAll('.rain-drop').forEach(d => d.remove());
+                isRainActive = false;
+            }
+        }
+
+        function createRainDrops() {
+            const overlay = document.getElementById('rainOverlay');
+            for (let i = 0; i < 100; i++) {
+                const drop = document.createElement('div');
+                drop.classList.add('rain-drop');
+                drop.style.left = Math.random() * 100 + 'vw';
+                drop.style.animationDuration = Math.random() * 1 + 0.5 + 's';
+                drop.style.opacity = Math.random();
+                overlay.appendChild(drop);
+            }
+        }
+
+        function handleMysteryButtonClick() {
+            const btn = document.getElementById('mysteryButton');
+            const loading = document.getElementById('rainLoading');
+            const audio = document.getElementById('rainSound');
+            btn.classList.add('hidden');
+            loading.classList.remove('hidden');
+            audio.load();
+            audio.oncanplaythrough = () => {
+                loading.classList.add('hidden');
+                startRainScenario();
+            };
+            setTimeout(() => {
+                if (!isRainActive) { 
+                    loading.classList.add('hidden');
+                    startRainScenario();
+                }
+            }, 2000);
+        }
+
+        function startRainScenario() {
+            toggleRain(true);
+            document.getElementById('rainTitle').textContent = "แย่แล้วฝนตก!";
+            document.getElementById('rainTitle').classList.add('text-blue-400');
+            document.getElementById('rainSubtitle').textContent = "ท้องฟ้าก็มืดแล้วด้วย... รีบไปหาที่หลบฝนกันเถอะ";
+            document.getElementById('goToQ3Button').classList.remove('hidden');
+        }
+
+        function restartQuiz() {
+            answers = {}; 
+            currentQuestionIndex = 0;
+            gayDarScore = 0;
+            toggleRain(false);
+            const musicPage = document.getElementById('musicInterludePage');
+            musicPage.classList.remove('persist-hidden');
+            musicPage.classList.add('hidden');
+            
+            // Stop final sound
+            const finalSound = document.getElementById('finalSound');
+            finalSound.pause();
+            finalSound.currentTime = 0;
+            document.getElementById('discoOverlay').classList.add('hidden');
+
+            showScreen('landingPage');
+        }
+
+        // --- Processing & Final Card Logic ---
+        function startProcessingAnimation() {
+            toggleRain(false); // Stop rain
+            showScreen('processingPage');
+            
+            const items = ['check1', 'check2', 'check3', 'check4'];
+            items.forEach((id, index) => {
+                setTimeout(() => {
+                    const el = document.getElementById(id);
+                    el.classList.add('show');
+                    el.classList.remove('text-gray-300');
+                    el.classList.add('text-green-400'); // Turn text green
+                }, (index + 1) * 1000);
+            });
+            
+            setTimeout(() => {
+                document.getElementById('finalLoadingText').classList.remove('opacity-0');
+            }, 4500);
+
+            setTimeout(() => {
+                showFinalGayCard();
+            }, 6000);
+        }
+
+        function showFinalGayCard() {
+            toggleRain(false);
+            showScreen('finalCardPage');
+            
+            const laugh = document.getElementById('finalSound');
+            laugh.loop = true; // Loop audio
+            laugh.volume = 1.0;
+            laugh.play().catch(e => console.log(e));
+            
+            const overlay = document.getElementById('discoOverlay');
+            overlay.classList.remove('hidden');
+        }
+
+        // --- 21 Game Logic ---
+        function initializeBoard() {
+            const container = document.getElementById('board-cells');
+            container.innerHTML = ''; 
+            for (let i = 1; i <= MAX_NUMBER; i++) {
+                const cell = document.createElement('div');
+                cell.id = `cell-${i}`;
+                cell.classList.add('cell');
+                if (i === MAX_NUMBER) {
+                    cell.classList.add('cell-21');
+                    cell.innerHTML = `21<br>💣`; 
+                } else {
+                    cell.textContent = i;
+                }
+                container.appendChild(cell);
+            }
+            updateTokenPosition(0, true);
+        }
+
+        function updateTokenPosition(newNumber, isLastMoverPlayer) {
+            const token = document.getElementById('game-token');
+            if (newNumber === 0) {
+                token.style.opacity = '0';
+                return;
+            }
+            const targetCell = document.getElementById(`cell-${newNumber}`);
+            if (!targetCell) return;
+            
+            for(let i=1; i<=newNumber; i++) {
+                document.getElementById(`cell-${i}`).classList.add('active');
+            }
+
+            const boardRect = document.getElementById('game-board-container').getBoundingClientRect();
+            const cellRect = targetCell.getBoundingClientRect();
+            const x = cellRect.left + cellRect.width / 2 - boardRect.left;
+            const y = cellRect.top + cellRect.height / 2 - boardRect.top;
+
+            token.style.left = `${x}px`;
+            token.style.top = `${y}px`;
+            token.style.opacity = '1';
+            token.textContent = isLastMoverPlayer ? '🧍' : '🤖'; 
+            token.style.backgroundColor = isLastMoverPlayer ? '#f39c12' : '#3498db'; 
+        }
+
+        function updateStateDisplay(text, isTurn) {
+            const msg = document.getElementById('gameMessage');
+            msg.textContent = text;
+            if(isTurn) {
+                msg.classList.remove('text-red-500', 'text-green-500');
+                msg.classList.add('text-gray-300');
+            }
+            document.getElementById('current-number-display').textContent = currentNumber;
+            
+            const btns = document.querySelectorAll('.game-btn');
+            btns.forEach(btn => {
+                const count = parseInt(btn.textContent.slice(1));
+                btn.disabled = !isPlayerTurn || isAnimating || (currentNumber + count > MAX_NUMBER);
+                if(btn.disabled) btn.classList.add('btn-disabled');
+                else btn.classList.remove('btn-disabled');
+            });
+        }
+
+        function animateMove(start, end, isPlayerMover, callback) {
+            isAnimating = true;
+            let current = start;
+            const interval = setInterval(() => {
+                current++;
+                playMoveSound();
+                currentNumber = current;
+                document.getElementById('current-number-display').textContent = currentNumber;
+                updateTokenPosition(current, isPlayerMover); 
+
+                if (current >= end) {
+                    clearInterval(interval);
+                    isAnimating = false;
+                    if (current >= MAX_NUMBER) {
+                        checkGameOver(isPlayerMover);
+                    } else {
+                        callback();
+                    }
+                }
+            }, 350);
+        }
+
+        function checkGameOver(lastMoverIsPlayer) {
+            isPlayerTurn = false;
+            if (lastMoverIsPlayer) { 
+                document.getElementById('gameMessage').textContent = 'คุณแพ้ให้ AI เก้ง 😭';
+                document.getElementById('gameMessage').classList.add('text-red-500');
+                // Trigger Processing Animation for Gay Result
+                setTimeout(startProcessingAnimation, 2000); 
+            } else { 
+                document.getElementById('gameMessage').textContent = 'AIเก้ง นับ 21! 🥳 คุณชนะ!';
+                document.getElementById('gameMessage').classList.add('text-green-500');
+                // Straight Result
+                setTimeout(() => showFinalResult(false), 2000); 
+            }
+        }
+
+        window.playerMove = function(count) {
+            if (!isPlayerTurn || isAnimating) return;
+            const newNumber = currentNumber + count;
+            const start = currentNumber;
+            const end = newNumber > MAX_NUMBER ? MAX_NUMBER : newNumber;
+            isPlayerTurn = false; 
+            updateStateDisplay('ตา AIเก้ง...', false);
+            animateMove(start, end, true, startAiTurn); 
+        }
+
+        function startAiTurn() {
+            updateStateDisplay(`AIเก้ง กำลังคิด... 🤔`, false);
+            setTimeout(() => {
+                let count;
+                let nextSafe = SAFE_NUMBERS_FOR_AI.find(n => n > currentNumber);
+                if (nextSafe) count = nextSafe - currentNumber;
+                else count = 1; 
+
+                if (count < 1 || count > 3) count = 1;
+                if (currentNumber + count > MAX_NUMBER) count = MAX_NUMBER - currentNumber; 
+
+                const newNumber = currentNumber + count;
+                animateMove(currentNumber, newNumber, false, () => {
+                    isPlayerTurn = true;
+                    updateStateDisplay(`ตาคุณนับต่อ! (${currentNumber})`, true);
+                });
+            }, 1000); 
+        }
+
+        window.closeRulesAndStart = function() {
+            document.getElementById('rulesModal').classList.add('hidden');
+            resetGame();
+        }
+
+        function resetGame() {
+            currentNumber = 0;
+            isPlayerTurn = true;
+            isAnimating = false;
+            initializeBoard(); 
+            updateStateDisplay('ตาคุณเริ่ม: เลือก +1, +2, หรือ +3', true);
+        }
+
+        function showFinalResult(isGay) {
+            // Reusing old function for Straight result only
+            if (!isGay) {
+                let result = { emoji: "💪", title: "Straight as an Arrow", analysis: "เหลือเชื่อ! คุณสามารถเอาชนะ AI เก้งและพิสูจน์ตัวเองได้สำเร็จ จากผลการคำนวณทางคณิตศาสตร์ยืนยันแล้วว่าคุณมีความเป็นชายแท้/หญิงแท้ 100% ไม่มีสิ่งเจือปน ยินดีด้วยคุณรอดพ้นจาก GAY-DAR ไปได้อย่างหวุดหวิด!" };
+                gayDarScore = 0;
+                document.getElementById('resultEmoji').textContent = result.emoji;
+                document.getElementById('resultTitle').textContent = result.title;
+                document.getElementById('resultAnalysis').textContent = result.analysis;
+                document.getElementById('finalGayDarScore').textContent = `${gayDarScore}%`;
+                showScreen('resultPage');
+                document.getElementById('finalScoreContainer').classList.remove('hidden');
+                document.getElementById('restartButton').classList.remove('hidden');
+                document.getElementById('continueToNextQButton').classList.add('hidden');
+                document.getElementById('goToWarningButton').classList.add('hidden');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.documentElement.classList.add('dark');
+
+            document.getElementById('startButton').addEventListener('click', startQuiz);
+            document.getElementById('restartButton').addEventListener('click', restartQuiz); 
+            document.getElementById('nextButton').addEventListener('click', handleNextQuestion);
+            document.getElementById('continueToMusicButton').addEventListener('click', showMusicInterlude);
+            document.getElementById('goToQ2Button').addEventListener('click', () => { loadQuestion(2); showScreen('quizPage'); });
+            document.getElementById('continueToRainButton').addEventListener('click', showRainInterlude);
+            document.getElementById('mysteryButton').addEventListener('click', handleMysteryButtonClick);
+            document.getElementById('goToQ3Button').addEventListener('click', () => { loadQuestion(3); showScreen('quizPage'); });
+            document.getElementById('continueToNextQButton').addEventListener('click', () => {
+                if (currentQuestionIndex < TOTAL_QUESTIONS - 1) {
+                    loadQuestion(currentQuestionIndex + 2); 
+                    showScreen('quizPage');
+                }
+            });
+            document.getElementById('goToWarningButton').addEventListener('click', showWarningInterlude);
+            document.getElementById('goToMathIntroButton').addEventListener('click', showMathIntroInterlude);
+            document.getElementById('goToQ5Button').addEventListener('click', () => {
+                loadQuestion(5);
+            });
+        });
+    </script>
+</body>
+</html>
