@@ -7,201 +7,202 @@
     <link rel="icon" href="https://raw.githubusercontent.com/panwyyt/Joo4Tune/refs/heads/main/hatchedboy_logo.jpeg" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700;800&display=swap');
-        
-        :root {
-            --font-main: 'Prompt', sans-serif;
-            --neon-pink: #ff00ff;
-            --neon-purple: #8a2be2;
-            --bg-deep-dark: #0f0f1c;
-            --card-dark: #1e1b34;
-            --color-pink: #ff69b4;
-            --color-black: #000000;
-            --color-blue: #4299e1;
-            --color-white: #ffffff;
-            --color-rainbow: #32cd32;
-        }
+    @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700;800&display=swap');
+    
+    :root {
+        --font-main: 'Prompt', sans-serif;
+        --neon-pink: #ff00ff;
+        --neon-purple: #8a2be2;
+        --bg-deep-dark: #000000; /* เปลี่ยนเป็นสีดำสนิท */
+        --card-dark: #12121e;    /* พื้นหลังการ์ดให้เป็นสีดาร์กม่วงเข้ม */
+        --color-pink: #ff69b4;
+        --color-black: #000000;
+        --color-blue: #4299e1;
+        --color-white: #ffffff;
+        --color-rainbow: #32cd32;
+    }
 
-        body {
-            font-family: var(--font-main);
-            background-color: var(--bg-deep-dark); 
-            background-image: radial-gradient(circle at 50% 10%, rgba(138, 43, 226, 0.15), transparent 50%), 
-                              radial-gradient(circle at 80% 90%, rgba(255, 0, 255, 0.15), transparent 60%);
-            color: #e2e8f0; 
-            transition: background-color 0.3s, color 0.3s;
-            min-height: 100vh;
-            overflow-y: auto;
-        }
+    body {
+        font-family: var(--font-main);
+        background-color: var(--bg-deep-dark); /* ใช้สีดำสนิท */
+        /* ลดความสว่างของแสง Neon Background ลงเพื่อไม่ให้รบกวน */
+        background-image: radial-gradient(circle at 50% 10%, rgba(138, 43, 226, 0.05), transparent 50%), 
+                          radial-gradient(circle at 80% 90%, rgba(255, 0, 255, 0.05), transparent 60%);
+        color: #e2e8f0; /* สีตัวอักษรเริ่มต้นให้เป็นสีขาวเทา */
+        transition: background-color 0.3s, color 0.3s;
+        min-height: 100vh;
+        overflow-y: auto;
+    }
 
-        .neon-card {
-            background-color: var(--card-dark); 
-            box-shadow: 0 0 30px rgba(138, 43, 226, 0.7), 0 0 15px rgba(255, 0, 255, 0.5) inset;
-            position: relative;
-            z-index: 10;
-            margin-top: auto;
-            margin-bottom: auto;
-        }
-        
-        .text-glow { text-shadow: 0 0 8px rgba(255, 255, 255, 0.8), 0 0 20px var(--neon-pink); }
-        .neon-gradient { background-image: linear-gradient(to right, var(--neon-pink), var(--neon-purple)); }
-        .warning-gradient { background-image: linear-gradient(to right, #ff416c, #ff4b2b); }
-        .text-warning-glow { text-shadow: 0 0 10px rgba(255, 0, 0, 0.8), 0 0 20px rgba(255, 100, 0, 0.6); }
+    .neon-card {
+        background-color: var(--card-dark); 
+        box-shadow: 0 0 40px rgba(138, 43, 226, 0.7), 0 0 20px rgba(255, 0, 255, 0.5) inset; /* เพิ่มความเข้มเงา */
+        position: relative;
+        z-index: 10;
+        margin-top: auto;
+        margin-bottom: auto;
+    }
+    
+    .text-glow { text-shadow: 0 0 8px rgba(255, 255, 255, 0.8), 0 0 20px var(--neon-pink); }
+    .neon-gradient { background-image: linear-gradient(to right, var(--neon-pink), var(--neon-purple)); }
+    .warning-gradient { background-image: linear-gradient(to right, #ff416c, #ff4b2b); }
+    .text-warning-glow { text-shadow: 0 0 10px rgba(255, 0, 0, 0.8), 0 0 20px rgba(255, 100, 0, 0.6); }
 
-        #quizCanvas {
-            touch-action: none;
-            cursor: pointer;
-            border-radius: 12px;
-            background-color: rgba(0, 0, 0, 0.2);
-            max-width: 100%;
-            height: auto;
-        }
-        
-        .gayDarBarClass {
-            background-image: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
-            transition: width 0.8s ease-in-out;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-            border-radius: 9999px;
-            height: 100%;
-        }
+    #quizCanvas {
+        touch-action: none;
+        cursor: pointer;
+        border-radius: 12px;
+        background-color: rgba(0, 0, 0, 0.2);
+        max-width: 100%;
+        height: auto;
+    }
+    
+    .gayDarBarClass {
+        background-image: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+        transition: width 0.8s ease-in-out;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        border-radius: 9999px;
+        height: 100%;
+    }
 
-        .persist-hidden {
-            position: absolute;
-            top: -9999px;
-            left: -9999px;
-            opacity: 0;
-            pointer-events: none;
-            height: 0;
-            width: 0;
-            overflow: hidden;
-        }
+    .persist-hidden {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+        opacity: 0;
+        pointer-events: none;
+        height: 0;
+        width: 0;
+        overflow: hidden;
+    }
 
-        .rain-drop {
-            position: absolute;
-            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.6));
-            width: 2px;
-            height: 20px;
-            top: -20px;
-            animation: fall linear infinite;
-        }
+    .rain-drop {
+        position: absolute;
+        background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.6));
+        width: 2px;
+        height: 20px;
+        top: -20px;
+        animation: fall linear infinite;
+    }
 
-        .btn-disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
+    .btn-disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none !important;
+    }
 
-        /* Q5 Game Styles */
-        #game-board-container {
-            position: relative; 
-            width: 100%;
-            margin-bottom: 15px;
-            background-color: rgba(255, 255, 255, 0.05); /* Transparent dark */
-            padding: 10px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 0, 255, 0.3);
-        }
-        #board-cells {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-        }
-        .cell {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            aspect-ratio: 1 / 1; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 0.9em;
-            font-weight: bold;
-            border-radius: 4px;
-            color: #fff;
-            transition: all 0.3s;
-        }
-        .cell-21 {
-            background-color: rgba(255, 0, 0, 0.2);
-            border-color: #ff0000;
-            color: #ff4444;
-            font-size: 0.8em;
-            line-height: 1.2;
-        }
-        .cell.active {
-            background-color: rgba(255, 0, 255, 0.3);
-            border-color: var(--neon-pink);
-            box-shadow: 0 0 10px var(--neon-pink);
-        }
-        #game-token {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.2em;
-            z-index: 20;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
-            transition: left 0.3s ease-out, top 0.3s ease-out; 
-            opacity: 0; 
-            transform: translate(-50%, -50%);
-        }
-        
-        /* Checklist Animation */
-        .check-item {
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.5s ease-out, transform 0.5s ease-out, color 0.3s ease;
-        }
-        .check-item.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .check-item.active {
-            color: #4ade80; /* text-green-400 */
-        }
-        .check-icon {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            margin-right: 10px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .check-item.active .check-icon {
-            opacity: 1;
-        }
+    /* Q5 Game Styles */
+    #game-board-container {
+        position: relative; 
+        width: 100%;
+        margin-bottom: 15px;
+        background-color: rgba(255, 255, 255, 0.05);
+        padding: 10px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 0, 255, 0.3);
+    }
+    #board-cells {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 5px;
+    }
+    .cell {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        aspect-ratio: 1 / 1; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 0.9em;
+        font-weight: bold;
+        border-radius: 4px;
+        color: #fff;
+        transition: all 0.3s;
+    }
+    .cell-21 {
+        background-color: rgba(255, 0, 0, 0.2);
+        border-color: #ff0000;
+        color: #ff4444;
+        font-size: 0.8em;
+        line-height: 1.2;
+    }
+    .cell.active {
+        background-color: rgba(255, 0, 255, 0.3);
+        border-color: var(--neon-pink);
+        box-shadow: 0 0 10px var(--neon-pink);
+    }
+    #game-token {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.2em;
+        z-index: 20;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+        transition: left 0.3s ease-out, top 0.3s ease-out; 
+        opacity: 0; 
+        transform: translate(-50%, -50%);
+    }
+    
+    /* Checklist Animation */
+    .check-item {
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.5s ease-out, transform 0.5s ease-out, color 0.3s ease;
+    }
+    .check-item.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .check-item.active {
+        color: #4ade80; /* text-green-400 */
+    }
+    .check-icon {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        margin-right: 10px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    .check-item.active .check-icon {
+        opacity: 1;
+    }
 
-        /* 9:16 Card Aspect Ratio */
-        #finalCardPage {
-            max-width: 380px; /* Limit width for desktop to keep aspect ratio nice */
-            margin: 20px auto;
-        }
+    /* 9:16 Card Aspect Ratio */
+    #finalCardPage {
+        max-width: 380px; /* Limit width for desktop to keep aspect ratio nice */
+        margin: 20px auto;
+    }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .modal-fade { animation: fadeIn 0.3s ease-out; }
-        @keyframes fall { to { margin-top: 100vh; } }
-        
-        /* Disco Lights Animation */
-        @keyframes disco {
-            0% { background-color: rgba(255, 0, 0, 0.2); }
-            15% { background-color: rgba(255, 255, 0, 0.2); }
-            30% { background-color: rgba(0, 255, 0, 0.2); }
-            45% { background-color: rgba(0, 255, 255, 0.2); }
-            60% { background-color: rgba(0, 0, 255, 0.2); }
-            75% { background-color: rgba(255, 0, 255, 0.2); }
-            90% { background-color: rgba(255, 255, 255, 0.2); }
-            100% { background-color: rgba(255, 0, 0, 0.2); }
-        }
-        
-        .disco-overlay {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 5;
-            mix-blend-mode: overlay;
-            animation: disco 0.5s infinite alternate;
-        }
-    </style>
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal-fade { animation: fadeIn 0.3s ease-out; }
+    @keyframes fall { to { margin-top: 100vh; } }
+    
+    /* Disco Lights Animation */
+    @keyframes disco {
+        0% { background-color: rgba(255, 0, 0, 0.2); }
+        15% { background-color: rgba(255, 255, 0, 0.2); }
+        30% { background-color: rgba(0, 255, 0, 0.2); }
+        45% { background-color: rgba(0, 255, 255, 0.2); }
+        60% { background-color: rgba(0, 0, 255, 0.2); }
+        75% { background-color: rgba(255, 0, 255, 0.2); }
+        90% { background-color: rgba(255, 255, 255, 0.2); }
+        100% { background-color: rgba(255, 0, 0, 0.2); }
+    }
+    
+    .disco-overlay {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 5;
+        mix-blend-mode: overlay;
+        animation: disco 0.5s infinite alternate;
+    }
+</style>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -431,16 +432,16 @@
         </header>
         <main id="checklistContainer" class="space-y-4 text-left text-lg text-gray-300 pl-8">
             <div class="check-item flex items-center" id="check1">
-                <span class="check-icon">✓</span> สีของความเป็นเกย์
+                <span class="check-icon">✓</span> สีของความเป็นเกย์...✅
             </div>
             <div class="check-item flex items-center" id="check2">
-                <span class="check-icon">✓</span> สัตว์แห่งชาวเกย์
+                <span class="check-icon">✓</span> สัตว์แห่งชาวเกย์...✅
             </div>
             <div class="check-item flex items-center" id="check3">
-                <span class="check-icon">✓</span> การตอบสนองแบบเกย์
+                <span class="check-icon">✓</span> การตอบสนองแบบเกย์...✅
             </div>
             <div class="check-item flex items-center" id="check4">
-                <span class="check-icon">✓</span> การเหมารวมที่เกย์ได้รับ
+                <span class="check-icon">✓</span> การเหมารวมที่เกย์ได้รับ...✅
             </div>
         </main>
         <div id="finalLoadingText" class="mt-8 text-primary-pink font-bold text-xl opacity-0 transition-opacity duration-1000">
@@ -986,7 +987,7 @@
             toggleRain(true);
             document.getElementById('rainTitle').textContent = "แย่แล้วฝนตก!";
             document.getElementById('rainTitle').classList.add('text-blue-400');
-            document.getElementById('rainSubtitle').textContent = "ท้องฟ้าก็มืดแล้วด้วย... รีบไปหาที่หลบฝนกันเถอะ";
+            document.getElementById('rainSubtitle').textContent = "ท้องฟ้าก็มืดแล้วด้วย... รีบไปกันต่อเถอะ";
             document.getElementById('goToQ3Button').classList.remove('hidden');
         }
 
